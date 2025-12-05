@@ -1,0 +1,40 @@
+name: CI Build and Push to ACR
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main"]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Azure CLI login to ACR
+        run: |
+          az acr login --name cry3dpwjglaxlmi
+
+      - name: Build Docker Image
+        run: |
+           docker build -f src/Web/Dockerfile . -t crcos2rtoxytweo.azurecr.io/eshoponweb/web:latest
+          
+      - name: Push Docker Image
+        run: |
+          docker push cry3dpwjglaxlmi.azurecr.io/eshoponweb/web:latest
+
+      - name: Trigger Azure DevOps CD Pipeline
+        uses: Azure/pipelines@v1
+        with:
+          azure-devops-project-url: "https://dev.azure.com/ADOCourseOrg04/eShopOnWeb-57402443"
+          azure-pipeline-name: "eshoponweb-cd-webapp-docker"
+          azure-devops-token: ${{ secrets.AZURE_DEVOPS_PAT }}
+          azure-pipeline-variables: |
+            triggeredBy=github-ci
