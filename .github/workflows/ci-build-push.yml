@@ -24,7 +24,7 @@ jobs:
 
       - name: Build Docker Image
         run: |
-           docker build -f src/Web/Dockerfile . -t crcos2rtoxytweo.azurecr.io/eshoponweb/web:latest
+           docker build -f src/Web/Dockerfile . -t cry3dpwjglaxlmi.azurecr.io/eshoponweb/web:latest
           
       - name: Push Docker Image
         run: |
